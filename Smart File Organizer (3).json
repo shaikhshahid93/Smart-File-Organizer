@@ -1,0 +1,2885 @@
+{
+  "name": "Smart File Organizer",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1MYr6shXfkpJFhgVWi3lAi5AiwsxJ_yql",
+          "mode": "list",
+          "cachedResultName": "Inbox",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1MYr6shXfkpJFhgVWi3lAi5AiwsxJ_yql"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "e3e0ffff-7c7e-4649-9917-9f802bdda24d",
+      "name": "Watch Inbox Folder",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        608
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {
+          "binaryPropertyName": "data",
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "7f23de02-2752-4b51-bcce-ed053f0f6fb3",
+      "name": "Download File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1344,
+        608
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "Review",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "root"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "id": "c90a48c0-540d-4a3a-a0b3-481a11575a59",
+      "name": "Search Review Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1120,
+        608
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "1861f3c0-f013-4435-b3b5-133ad7da9655",
+      "name": "Review Folder Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -896,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "reviewFolderId",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "c8c94f30-dbf8-4316-acf1-5c91137b2396",
+      "name": "Store Review Folder Id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -448,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "Review",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "root"
+        },
+        "options": {}
+      },
+      "id": "211f1959-2c4c-47e6-9ab9-8d5db6b18332",
+      "name": "Create Review Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -672,
+        672
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "8fed75f7-f5fe-405e-91f5-67583c8ca238",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "application/pdf"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c6d7acc9-61b5-4236-81b5-d51c9291b91e",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "startsWith",
+                      "type": "string"
+                    },
+                    "rightValue": "image/"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "605c20f9-5125-4cb5-86bb-0df2497bd54e",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "text/plain"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "a9856128-10ea-41c7-aba9-3a3b97c0fe79",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "text/csv"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "9db6303a-34a4-4357-9395-33170a651a7f",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "application/json"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "07c0ff18-b463-4ac6-b705-c7ade7a6a5ac",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "fc62cd24-cea8-4993-814b-63cb154e0592",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "application/vnd.ms-excel"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            },
+            {
+              "conditions": {
+                "combinator": "and",
+                "conditions": [
+                  {
+                    "id": "c1e41312-ce83-40a6-8059-0eb7846da836",
+                    "leftValue": "={{ $(\"Source File\").item.json.mimeType }}",
+                    "operator": {
+                      "operation": "equals",
+                      "type": "string"
+                    },
+                    "rightValue": "application/vnd.google-apps.document"
+                  }
+                ],
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                }
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Unsupported"
+        }
+      },
+      "id": "e320fba1-4d77-4048-89be-56247c847a8e",
+      "name": "Switch By File Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {
+          "keepSource": "both"
+        }
+      },
+      "id": "80c8d4a6-9373-4496-9b65-77da8739af40",
+      "name": "Extract PDF Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "extractedText",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3c4de3fd-0146-4268-bd84-50edc3687ed2",
+      "name": "Normalize PDF Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "models/gemini-3.1-flash-lite"
+        },
+        "text": "Describe the content of this image in detail, including any visible text, headings, titles, and key information that would help identify what the document is about.",
+        "inputType": "binary",
+        "options": {
+          "maxOutputTokens": 1024
+        }
+      },
+      "id": "f019dcba-dd7e-4dde-ad5e-65058c61b843",
+      "name": "Analyze Image Content",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        192
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qNBZiiG2qveD2bAg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "extractedText",
+              "type": "string",
+              "value": "={{ $json.content || $json.text || $json.data || \"\" }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "3b042936-b572-4ed2-9216-a983cd2b9e33",
+      "name": "Normalize Image Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {
+          "keepSource": "both"
+        }
+      },
+      "id": "b8761770-6fc4-443a-aff3-d6414356e24f",
+      "name": "Extract Plain Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "extractedText",
+              "type": "string",
+              "value": "={{ $json.data }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "6970090a-c398-4823-82e9-99ecea615bf1",
+      "name": "Normalize Text Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "db45a043-a1d0-4e69-baca-960e2591a722",
+      "name": "Extract CSV Rows",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst rows = items.map(function(i) { return i.json; });\nconst preview = rows.slice(0, 100);\nconst firstBinary = items.length > 0 ? items[0].binary : undefined;\nreturn [{ json: { extractedText: JSON.stringify(preview) + \" (\" + rows.length + \" rows total)\" }, binary: firstBinary }];"
+      },
+      "id": "80cc8c87-0e24-4e76-b69b-4e84c60db98c",
+      "name": "Summarize Spreadsheet Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {
+          "keepSource": "both"
+        }
+      },
+      "id": "9e0258c0-8d87-4c85-9b02-b0399f2c887e",
+      "name": "Extract JSON Content",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        768
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "extractedText",
+              "type": "string",
+              "value": "={{ JSON.stringify($json.data) }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "f734b548-6c24-43a3-b264-cabfcddb2d52",
+      "name": "Normalize JSON Content",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        992
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "d7d017be-7e70-4032-8a40-399ec48ebbdf",
+      "name": "Extract XLSX Rows",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xls",
+        "options": {}
+      },
+      "id": "133f1e62-15ea-41b5-9a1c-0d632a07fdaf",
+      "name": "Extract XLS Rows",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "original_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "2",
+              "name": "file_id",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.id }}"
+            },
+            {
+              "id": "3",
+              "name": "mime_type",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.mimeType }}"
+            },
+            {
+              "id": "4",
+              "name": "new_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "5",
+              "name": "category",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "6",
+              "name": "subject",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "7",
+              "name": "document_type",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "8",
+              "name": "confidence",
+              "type": "number",
+              "value": 0
+            },
+            {
+              "id": "9",
+              "name": "reason",
+              "type": "string",
+              "value": "=Unsupported file type for automatic processing: {{ $(\"Source File\").item.json.mimeType }}"
+            },
+            {
+              "id": "10",
+              "name": "status",
+              "type": "string",
+              "value": "needs_review"
+            },
+            {
+              "id": "11",
+              "name": "organized_at",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "12",
+              "name": "destination_folder",
+              "type": "string",
+              "value": "Review"
+            },
+            {
+              "id": "13",
+              "name": "review_folder_id_raw",
+              "type": "string",
+              "value": "={{ $json.reviewFolderId }}"
+            },
+            {
+              "id": "14",
+              "name": "checksum",
+              "type": "string",
+              "value": "={{ $(\"Hash File Content\").item.json.checksum }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "12a8aa8f-7fb3-4c60-a7fc-94eeb4ead694",
+      "name": "Mark Unsupported Format",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1024,
+        1344
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Original filename: {{ $(\"Source File\").item.json.name }}\nMIME type: {{ $(\"Source File\").item.json.mimeType }}\n\nExtracted content:\n{{ $json.extractedText }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a document classification assistant for a personal file-organization system called Smart File Organizer. Given the extracted content of a file, its original filename, and its MIME type, classify it.\n\nDetermine:\n- category: exactly one of College, Work, Personal, Finance, Certificates, Projects, Other\n- subject: for College documents, the specific course or topic (e.g. Operating Systems, Networking, Python). For other categories, a short topic label only if clearly evident from the content, otherwise an empty string.\n- document_type: a short label describing the kind of document (e.g. Lecture Notes, Assignment, Invoice, Resume, Certificate, Report, Notes)\n- suggested_filename: a short, descriptive, human-readable filename without an extension, reflecting the content\n- confidence: your confidence in this classification, from 0 to 1\n- reason: a brief one to two sentence explanation for your classification\n\nBe conservative with confidence. Only score above 0.75 when the content clearly and unambiguously supports the category and subject you chose. If the extracted content is sparse, ambiguous, or you are mostly guessing from the filename alone, score confidence below 0.75 so the file can be reviewed manually instead of being organized automatically."
+        }
+      },
+      "id": "f7868698-bad5-41e2-a411-eb2ad15b43d5",
+      "name": "Classify Document",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite",
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "2201034d-018d-44ed-a28f-e38850763de5",
+      "name": "Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        608
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qNBZiiG2qveD2bAg",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"category\": \"College\", \"subject\": \"Operating Systems\", \"document_type\": \"Lecture Notes\", \"suggested_filename\": \"Operating Systems Notes\", \"confidence\": 0.92, \"reason\": \"Contains lecture notes about process scheduling and memory management.\" }"
+      },
+      "id": "ab0d8c1f-f60d-495b-b538-79b0310fa92b",
+      "name": "Classification Schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        592,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.output.confidence }}",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              },
+              "rightValue": 0.75
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b86e5f49-be82-487e-aa48-d0c7ec608705",
+      "name": "Confidence Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        800,
+        384
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $(\"Classify Document\").item.json.output.category }}",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1-JJr7ZyDKfF_HBnnbk1e9brTkYJY7fpY"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "id": "47016e8d-208a-4741-b444-692822bd40da",
+      "name": "Search Category Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1024,
+        288
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "15990783-b4c1-4639-b622-ad7b0730cf4e",
+      "name": "Category Folder Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1248,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "categoryFolderId",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c8e97925-082d-45ad-8675-d8997e18bffc",
+      "name": "Store Category Folder Id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1696,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $(\"Classify Document\").item.json.output.category }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "1-JJr7ZyDKfF_HBnnbk1e9brTkYJY7fpY"
+        },
+        "options": {}
+      },
+      "id": "f86807ca-53fd-4a5f-985c-5917c9e81b2d",
+      "name": "Create Category Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1472,
+        384
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "original_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "2",
+              "name": "file_id",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.id }}"
+            },
+            {
+              "id": "3",
+              "name": "mime_type",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.mimeType }}"
+            },
+            {
+              "id": "4",
+              "name": "new_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "5",
+              "name": "category",
+              "type": "string",
+              "value": "={{ $json.output.category }}"
+            },
+            {
+              "id": "6",
+              "name": "subject",
+              "type": "string",
+              "value": "={{ $json.output.subject }}"
+            },
+            {
+              "id": "7",
+              "name": "document_type",
+              "type": "string",
+              "value": "={{ $json.output.document_type }}"
+            },
+            {
+              "id": "8",
+              "name": "confidence",
+              "type": "number",
+              "value": "={{ $json.output.confidence }}"
+            },
+            {
+              "id": "9",
+              "name": "reason",
+              "type": "string",
+              "value": "={{ $json.output.reason }}"
+            },
+            {
+              "id": "10",
+              "name": "status",
+              "type": "string",
+              "value": "needs_review"
+            },
+            {
+              "id": "11",
+              "name": "organized_at",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "12",
+              "name": "destination_folder",
+              "type": "string",
+              "value": "Review"
+            },
+            {
+              "id": "13",
+              "name": "review_folder_id_raw",
+              "type": "string",
+              "value": "={{ $(\"Store Review Folder Id\").item.json.reviewFolderId }}"
+            },
+            {
+              "id": "14",
+              "name": "checksum",
+              "type": "string",
+              "value": "={{ $(\"Hash File Content\").item.json.checksum }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "fd305803-e293-4ca0-a7ee-6602e89a7645",
+      "name": "Prepare Low-Confidence Review Record",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1024,
+        1008
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $(\"Classify Document\").item.json.output.subject }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "79540d97-8d3c-464b-9e3d-70cf5e2a1123",
+      "name": "Has Subject?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1920,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $(\"Classify Document\").item.json.output.subject }}",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $json.categoryFolderId }}"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "id": "b5bc7da1-9046-4081-ba85-fc68e2f97d07",
+      "name": "Search Subject Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2144,
+        240
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              },
+              "rightValue": ""
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "150802d7-4121-4b31-b191-e15174dfadc0",
+      "name": "Subject Folder Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2368,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "destinationFolderId",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e2130eb4-396c-4c14-acf2-7093492b57d2",
+      "name": "Store Subject Folder Id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2816,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $(\"Classify Document\").item.json.output.subject }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $(\"Store Category Folder Id\").item.json.categoryFolderId }}"
+        },
+        "options": {}
+      },
+      "id": "9e442f99-9ccd-47c3-a55e-cade28a5aa89",
+      "name": "Create Subject Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2592,
+        384
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "destinationFolderId",
+              "type": "string",
+              "value": "={{ $json.categoryFolderId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6723b804-8ec1-472e-a4a1-813b4944757a",
+      "name": "Use Category As Destination",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2816,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "original_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "2",
+              "name": "file_id",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.id }}"
+            },
+            {
+              "id": "3",
+              "name": "mime_type",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.mimeType }}"
+            },
+            {
+              "id": "4",
+              "name": "new_filename",
+              "type": "string",
+              "value": "={{ $json.new_filename }}"
+            },
+            {
+              "id": "5",
+              "name": "category",
+              "type": "string",
+              "value": "={{ $(\"Classify Document\").item.json.output.category }}"
+            },
+            {
+              "id": "6",
+              "name": "subject",
+              "type": "string",
+              "value": "={{ $(\"Classify Document\").item.json.output.subject }}"
+            },
+            {
+              "id": "7",
+              "name": "document_type",
+              "type": "string",
+              "value": "={{ $(\"Classify Document\").item.json.output.document_type }}"
+            },
+            {
+              "id": "8",
+              "name": "confidence",
+              "type": "number",
+              "value": "={{ $(\"Classify Document\").item.json.output.confidence }}"
+            },
+            {
+              "id": "9",
+              "name": "reason",
+              "type": "string",
+              "value": "={{ $(\"Classify Document\").item.json.output.reason }}"
+            },
+            {
+              "id": "10",
+              "name": "status",
+              "type": "string",
+              "value": "organized"
+            },
+            {
+              "id": "11",
+              "name": "organized_at",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "12",
+              "name": "destination_folder",
+              "type": "string",
+              "value": "=Organized/{{ $(\"Classify Document\").item.json.output.category }}{{ $(\"Classify Document\").item.json.output.subject ? \"/\" + $(\"Classify Document\").item.json.output.subject : \"\" }}"
+            },
+            {
+              "id": "13",
+              "name": "destination_folder_id_raw",
+              "type": "string",
+              "value": "={{ $json.destinationFolderId }}"
+            },
+            {
+              "id": "14",
+              "name": "checksum",
+              "type": "string",
+              "value": "={{ $(\"Hash File Content\").item.json.checksum }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d6502527-633b-46ef-8e4d-3aab2181965e",
+      "name": "Prepare Organized Record",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        3040,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.file_id }}"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.destination_folder_id_raw }}"
+        }
+      },
+      "id": "c7fcac3c-4466-4290-879a-d8e13d005442",
+      "name": "Move File To Category Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3264,
+        144
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.file_id }}"
+        },
+        "newUpdatedFileName": "={{ $json.new_filename }}",
+        "options": {}
+      },
+      "id": "03d2ce61-980e-4cdc-b7a9-e74e3935b3be",
+      "name": "Rename File",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3264,
+        336
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "file_organizer_index",
+        "dataToSend": "autoMapInputData",
+        "inputsToIgnore": "destination_folder_id_raw"
+      },
+      "id": "99b3d7fd-232f-4b1f-a599-50390df56c90",
+      "name": "Log Organized Record",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3264,
+        528
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ipVrGBPs3zS44TjZ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.file_id }}"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.review_folder_id_raw }}"
+        }
+      },
+      "id": "19080859-b7f5-4ff0-8862-9fd41bf0f3d4",
+      "name": "Move File To Review Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        1056
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "file_organizer_index",
+        "dataToSend": "autoMapInputData",
+        "inputsToIgnore": "review_folder_id_raw"
+      },
+      "id": "4deea2f0-0c12-4822-bc3b-5ff10eb0feae",
+      "name": "Log Review Record",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        1344
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ipVrGBPs3zS44TjZ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -352,
+        320
+      ],
+      "id": "b5a0901c-f326-45ba-97c8-4aec2a0881f3",
+      "name": "Merge"
+    },
+    {
+      "parameters": {},
+      "id": "ae077266-631e-481c-95a6-779b0d7d2e98",
+      "name": "Source File",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1344,
+        784
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e348e985-5c16-467f-a6d3-7ee7ba771a95",
+      "name": "Manual Backfill Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1568,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "1MYr6shXfkpJFhgVWi3lAi5AiwsxJ_yql"
+          },
+          "whatToSearch": "files",
+          "includeTrashed": false
+        },
+        "options": {
+          "fields": [
+            "id",
+            "name",
+            "mimeType"
+          ]
+        }
+      },
+      "id": "eeb9e46d-cb96-4e5e-9966-bfd1a43ecc42",
+      "name": "List Existing Inbox Files",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1344,
+        1504
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "4ae76f5a-89d9-458a-88a7-2e4472b955dd",
+      "name": "Split In Batches",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1120,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "isBackfillRun",
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "fe761fac-c4d1-4fd8-98b0-c6901e1b4cbc",
+      "name": "Tag As Backfill",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -896,
+        1504
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "id": "089aac26-cc63-464b-8e6d-259dabce1f28",
+      "name": "Wait For Organize Complete",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        3264,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "e68235e7-5c1e-40ab-b07b-5688fb313eb2",
+      "name": "Wait For Review Complete",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1248,
+        1568
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $(\"Source File\").item.json.isBackfillRun }}",
+              "operator": {
+                "operation": "true",
+                "type": "boolean"
+              },
+              "rightValue": "",
+              "id": "782b584c-25e4-471e-9eb6-f07405159715"
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "22bc58cd-eaf6-4d9c-bc2f-c49d7d9d5963",
+      "name": "Continue Backfill Loop?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2208,
+        1104
+      ]
+    },
+    {
+      "parameters": {
+        "binaryData": true,
+        "dataPropertyName": "checksum"
+      },
+      "id": "4642572d-c2dd-4554-845e-1c594928c849",
+      "name": "Hash File Content",
+      "type": "n8n-nodes-base.crypto",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "file_organizer_index",
+        "limit": 1,
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "checksum",
+              "condition": "eq",
+              "keyValue": "={{ $json.checksum }}"
+            }
+          ]
+        }
+      },
+      "id": "5a45116c-b9ce-489c-9e73-879de2d58fee",
+      "name": "Check For Duplicate",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        0,
+        112
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "ipVrGBPs3zS44TjZ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": "",
+              "id": "97555e43-32ff-4257-8c43-d9d1d1566d55"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "ad68440d-469a-4d8a-882e-f1eb66b9019d",
+      "name": "Is Duplicate?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        224,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "Duplicates",
+        "limit": 1,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $(\"Merge\").item.json.reviewFolderId }}"
+          },
+          "whatToSearch": "folders"
+        },
+        "options": {}
+      },
+      "id": "98b76ebf-93b0-417f-baaf-a85d79c553ea",
+      "name": "Search Duplicates Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        464,
+        -80
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.id }}",
+              "operator": {
+                "operation": "notEmpty",
+                "type": "string"
+              },
+              "rightValue": ""
+            }
+          ],
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "95f06a0f-5835-4eaf-bd8e-fc699d0428a7",
+      "name": "Duplicates Folder Exists?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "Duplicates",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $(\"Merge\").item.json.reviewFolderId }}"
+        },
+        "options": {}
+      },
+      "id": "513cca23-f4c0-4278-b2df-93371b51dd47",
+      "name": "Create Duplicates Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        560,
+        48
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "duplicatesFolderId",
+              "type": "string",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3418723f-4236-40b8-98c8-598e838f441d",
+      "name": "Store Duplicates Folder Id",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        896,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "original_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "2",
+              "name": "file_id",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.id }}"
+            },
+            {
+              "id": "3",
+              "name": "mime_type",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.mimeType }}"
+            },
+            {
+              "id": "4",
+              "name": "new_filename",
+              "type": "string",
+              "value": "={{ $(\"Source File\").item.json.name }}"
+            },
+            {
+              "id": "5",
+              "name": "category",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "6",
+              "name": "subject",
+              "type": "string",
+              "value": ""
+            },
+            {
+              "id": "7",
+              "name": "document_type",
+              "type": "string",
+              "value": "Duplicate"
+            },
+            {
+              "id": "8",
+              "name": "confidence",
+              "type": "number",
+              "value": 1
+            },
+            {
+              "id": "9",
+              "name": "reason",
+              "type": "string",
+              "value": "=Exact content duplicate (SHA-256 match) of existing file {{ $(\"Check For Duplicate\").item.json.file_id }}"
+            },
+            {
+              "id": "10",
+              "name": "status",
+              "type": "string",
+              "value": "duplicate"
+            },
+            {
+              "id": "11",
+              "name": "organized_at",
+              "type": "string",
+              "value": "={{ $now.toISO() }}"
+            },
+            {
+              "id": "12",
+              "name": "destination_folder",
+              "type": "string",
+              "value": "Review/Duplicates"
+            },
+            {
+              "id": "13",
+              "name": "checksum",
+              "type": "string",
+              "value": "={{ $(\"Hash File Content\").item.json.checksum }}"
+            },
+            {
+              "id": "14",
+              "name": "duplicate_of_file_id",
+              "type": "string",
+              "value": "={{ $(\"Check For Duplicate\").item.json.file_id }}"
+            },
+            {
+              "id": "15",
+              "name": "duplicates_folder_id_raw",
+              "type": "string",
+              "value": "={{ $json.duplicatesFolderId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e00a60c8-36aa-43fc-9e85-f623bdcf2f6a",
+      "name": "Prepare Duplicate Record",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1120,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.file_id }}"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.duplicates_folder_id_raw }}"
+        }
+      },
+      "id": "67beb519-b7f7-42cf-89e8-b829259243b9",
+      "name": "Move File To Duplicates Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        -160
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "file_organizer_index",
+        "dataToSend": "autoMapInputData",
+        "inputsToIgnore": "duplicates_folder_id_raw"
+      },
+      "id": "5213f818-715c-4e1c-a73b-094240b0c70d",
+      "name": "Log Duplicate Record",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "ipVrGBPs3zS44TjZ",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1",
+              "name": "baseFilename",
+              "type": "string",
+              "value": "={{ $(\"Classify Document\").item.json.output.suggested_filename }}{{ $(\"Source File\").item.json.name.includes(\".\") ? \".\" + $(\"Source File\").item.json.name.split(\".\").pop() : \"\" }}"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "a5bb23c0-b80e-482c-9009-f9b73dcf12d2",
+      "name": "Compute Base Filename",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        2816,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.baseFilename }}",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "mode": "id",
+            "value": "={{ $json.destinationFolderId }}"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {}
+      },
+      "id": "849b2d74-3db6-4efa-a8d5-26cdc839a5fb",
+      "name": "Check Filename Exists In Destination",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3040,
+        704
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9ttr2eQddUk5r72w",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const targetName = $(\"Compute Base Filename\").first().json.baseFilename;\nconst checksum = $(\"Hash File Content\").first().json.checksum;\nconst items = $input.all();\nconst collision = items.some(function(i) { return i.json && i.json.name === targetName; });\nlet finalName = targetName;\nif (collision) {\n  const dotIndex = targetName.lastIndexOf(\".\");\n  const base = dotIndex > -1 ? targetName.slice(0, dotIndex) : targetName;\n  const ext = dotIndex > -1 ? targetName.slice(dotIndex) : \"\";\n  finalName = base + \"_\" + checksum.slice(0, 8) + ext;\n}\nreturn [{ json: Object.assign({}, $(\"Compute Base Filename\").first().json, { new_filename: finalName }) }];"
+      },
+      "id": "d915bc25-b17c-4a10-8bec-f3aba8ba9bbf",
+      "name": "Resolve Final Filename",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3264,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "a3105619-0bbf-4bbb-8484-4e910436b199",
+      "name": "Reattach Binary",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        352,
+        272
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Download File": {
+      "main": [
+        [
+          {
+            "node": "Search Review Folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Review Folder": {
+      "main": [
+        [
+          {
+            "node": "Review Folder Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Review Folder Exists?": {
+      "main": [
+        [
+          {
+            "node": "Store Review Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Review Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Review Folder Id": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create Review Folder": {
+      "main": [
+        [
+          {
+            "node": "Store Review Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch By File Type": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analyze Image Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Plain Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract CSV Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract JSON Content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract XLSX Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract XLS Rows",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Plain Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark Unsupported Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "Normalize PDF Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize PDF Content": {
+      "main": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Image Content": {
+      "main": [
+        [
+          {
+            "node": "Normalize Image Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Image Content": {
+      "main": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Plain Text": {
+      "main": [
+        [
+          {
+            "node": "Normalize Text Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Text Content": {
+      "main": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract CSV Rows": {
+      "main": [
+        [
+          {
+            "node": "Summarize Spreadsheet Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize Spreadsheet Rows": {
+      "main": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract JSON Content": {
+      "main": [
+        [
+          {
+            "node": "Normalize JSON Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize JSON Content": {
+      "main": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract XLSX Rows": {
+      "main": [
+        [
+          {
+            "node": "Summarize Spreadsheet Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract XLS Rows": {
+      "main": [
+        [
+          {
+            "node": "Summarize Spreadsheet Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark Unsupported Format": {
+      "main": [
+        [
+          {
+            "node": "Move File To Review Folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Review Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Document": {
+      "main": [
+        [
+          {
+            "node": "Confidence Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classification Schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Classify Document",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Confidence Check": {
+      "main": [
+        [
+          {
+            "node": "Search Category Folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Low-Confidence Review Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Category Folder": {
+      "main": [
+        [
+          {
+            "node": "Category Folder Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Category Folder Exists?": {
+      "main": [
+        [
+          {
+            "node": "Store Category Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Category Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Category Folder Id": {
+      "main": [
+        [
+          {
+            "node": "Has Subject?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Category Folder": {
+      "main": [
+        [
+          {
+            "node": "Store Category Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Low-Confidence Review Record": {
+      "main": [
+        [
+          {
+            "node": "Move File To Review Folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Review Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Subject?": {
+      "main": [
+        [
+          {
+            "node": "Search Subject Folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Use Category As Destination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Subject Folder": {
+      "main": [
+        [
+          {
+            "node": "Subject Folder Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subject Folder Exists?": {
+      "main": [
+        [
+          {
+            "node": "Store Subject Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Subject Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Subject Folder": {
+      "main": [
+        [
+          {
+            "node": "Store Subject Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Organized Record": {
+      "main": [
+        [
+          {
+            "node": "Move File To Category Folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Rename File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Organized Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Watch Inbox Folder": {
+      "main": [
+        [
+          {
+            "node": "Source File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Source File": {
+      "main": [
+        [
+          {
+            "node": "Download File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Backfill Trigger": {
+      "main": [
+        [
+          {
+            "node": "List Existing Inbox Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Existing Inbox Files": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split In Batches": {
+      "main": [
+        null,
+        [
+          {
+            "node": "Tag As Backfill",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag As Backfill": {
+      "main": [
+        [
+          {
+            "node": "Source File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Move File To Category Folder": {
+      "main": [
+        [
+          {
+            "node": "Wait For Organize Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rename File": {
+      "main": [
+        [
+          {
+            "node": "Wait For Organize Complete",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Log Organized Record": {
+      "main": [
+        [
+          {
+            "node": "Wait For Organize Complete",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Move File To Review Folder": {
+      "main": [
+        [
+          {
+            "node": "Wait For Review Complete",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Review Record": {
+      "main": [
+        [
+          {
+            "node": "Wait For Review Complete",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Wait For Organize Complete": {
+      "main": [
+        [
+          {
+            "node": "Continue Backfill Loop?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait For Review Complete": {
+      "main": [
+        [
+          {
+            "node": "Continue Backfill Loop?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Continue Backfill Loop?": {
+      "main": [
+        [
+          {
+            "node": "Split In Batches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Hash File Content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Reattach Binary",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Hash File Content": {
+      "main": [
+        [
+          {
+            "node": "Check For Duplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check For Duplicate": {
+      "main": [
+        [
+          {
+            "node": "Is Duplicate?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Duplicate?": {
+      "main": [
+        [
+          {
+            "node": "Search Duplicates Folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reattach Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Duplicates Folder": {
+      "main": [
+        [
+          {
+            "node": "Duplicates Folder Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicates Folder Exists?": {
+      "main": [
+        [
+          {
+            "node": "Store Duplicates Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Duplicates Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Duplicates Folder": {
+      "main": [
+        [
+          {
+            "node": "Store Duplicates Folder Id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Duplicates Folder Id": {
+      "main": [
+        [
+          {
+            "node": "Prepare Duplicate Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Duplicate Record": {
+      "main": [
+        [
+          {
+            "node": "Move File To Duplicates Folder",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Duplicate Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Subject Folder Id": {
+      "main": [
+        [
+          {
+            "node": "Compute Base Filename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Use Category As Destination": {
+      "main": [
+        [
+          {
+            "node": "Compute Base Filename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Base Filename": {
+      "main": [
+        [
+          {
+            "node": "Check Filename Exists In Destination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Filename Exists In Destination": {
+      "main": [
+        [
+          {
+            "node": "Resolve Final Filename",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Final Filename": {
+      "main": [
+        [
+          {
+            "node": "Prepare Organized Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reattach Binary": {
+      "main": [
+        [
+          {
+            "node": "Switch By File Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true
+  },
+  "versionId": "a0a1e6ea-46d3-459a-99d5-04ca37695358",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "3a47cb1daa0cfc18b8b85b186b6e3d86658e778b295d7caf0bb4ad2419c50528"
+  },
+  "nodeGroups": [],
+  "id": "ATxtW0GGcYFVB0Gq",
+  "tags": []
+}
