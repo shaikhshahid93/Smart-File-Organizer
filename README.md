@@ -4,8 +4,6 @@ An AI-powered Google Drive file organizer I built using **n8n, Gemini, Supabase,
 
 The idea was to automate a simple but repetitive problem: dealing with files that have unclear names or are sitting in the wrong folder.
 
-![Smart File Organizer Workflow](smart-file-organizer.png)
-
 ## What It Does
 
 When a new file is added to my Google Drive **Inbox**, the workflow:
